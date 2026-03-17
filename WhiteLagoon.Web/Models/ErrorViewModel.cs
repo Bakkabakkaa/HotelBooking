@@ -1,4 +1,4 @@
-namespace BulkyWeb.Models;
+namespace WhiteLagoon.Web.Models;
 
 public class ErrorViewModel
 {

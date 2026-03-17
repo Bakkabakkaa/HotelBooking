@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WhiteLagoon.Infrastructure.Data;
 
-namespace BulkyWeb.Controllers;
+namespace WhiteLagoon.Web.Controllers;
 
 public class VillaController : Controller
 {
