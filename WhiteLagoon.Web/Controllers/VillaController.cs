@@ -52,7 +52,7 @@ public class VillaController : Controller
 
         if (obj == null)
         {
-            return NotFound();
+            return RedirectToAction("Error", "Home");
         }
 
         return View(obj);
