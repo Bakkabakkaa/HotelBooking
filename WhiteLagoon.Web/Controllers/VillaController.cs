@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;
 
@@ -29,9 +30,13 @@ public class VillaController : Controller
     [HttpPost]
     public IActionResult Create(Villa obj)
     {
-        _db.Villas.Add(obj);
-        _db.SaveChanges();
+        if (ModelState.IsValid)
+        {
+            _db.Villas.Add(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index", "Villa");
+        }
 
-        return RedirectToAction("Index", "Villa");
+        return View();
     }
 }
