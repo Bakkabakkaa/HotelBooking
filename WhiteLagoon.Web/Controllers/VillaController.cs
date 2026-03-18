@@ -44,4 +44,17 @@ public class VillaController : Controller
 
         return View();
     }
+
+    [HttpGet]
+    public IActionResult Update(int villaId)
+    {
+        Villa? obj = _db.Villas.FirstOrDefault(u => u.Id == villaId);
+
+        if (obj == null)
+        {
+            return NotFound();
+        }
+
+        return View(obj);
+    }
 }
