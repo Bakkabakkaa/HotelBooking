@@ -57,4 +57,17 @@ public class VillaController : Controller
 
         return View(obj);
     }
+
+    [HttpPost]
+    public IActionResult Update(Villa obj)
+    {
+        if (ModelState.IsValid)
+        {
+            _db.Villas.Update(obj);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        return View();
+    }
 }
