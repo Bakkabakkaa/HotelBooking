@@ -32,7 +32,7 @@ public class VillaController : Controller
     {
         if (obj.Name == obj.Description)
         {
-            ModelState.AddModelError("name", "The description cannot exactly match the Name.");
+            ModelState.AddModelError("", "The description cannot exactly match the Name.");
         }
         
         if (ModelState.IsValid)
