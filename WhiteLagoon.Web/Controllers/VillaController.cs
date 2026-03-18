@@ -61,7 +61,7 @@ public class VillaController : Controller
     [HttpPost]
     public IActionResult Update(Villa obj)
     {
-        if (ModelState.IsValid)
+        if (ModelState.IsValid && obj.Id > 0)
         {
             _db.Villas.Update(obj);
             _db.SaveChanges();
@@ -76,12 +76,27 @@ public class VillaController : Controller
     {
         Villa? obj = _db.Villas.FirstOrDefault(u => u.Id == villaId);
 
-        if (obj == null)
+        if (obj is null)
         {
             return RedirectToAction("Error", "Home");
         }
 
         return View(obj);
+    }
+
+    [HttpPost]
+    public IActionResult Delete(Villa obj)
+    {
+        Villa? objFromDb = _db.Villas.FirstOrDefault(u => u.Id == obj.Id);
+        
+        if (objFromDb is not null)
+        {
+            _db.Villas.Remove(objFromDb);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        return View(); 
     }
     
 }
