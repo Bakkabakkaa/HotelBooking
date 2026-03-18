@@ -70,4 +70,18 @@ public class VillaController : Controller
 
         return View();
     }
+
+    [HttpGet]
+    public IActionResult Delete(int villaId)
+    {
+        Villa? obj = _db.Villas.FirstOrDefault(u => u.Id == villaId);
+
+        if (obj == null)
+        {
+            return RedirectToAction("Error", "Home");
+        }
+
+        return View(obj);
+    }
+    
 }
