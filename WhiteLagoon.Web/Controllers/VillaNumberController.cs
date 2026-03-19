@@ -30,7 +30,7 @@ public class VillaNumberController : Controller
             Value = u.Id.ToString()
         });
 
-        ViewData["VillaList"] = list;
+        ViewBag.VillaList = list;
         
         return View();
     }
