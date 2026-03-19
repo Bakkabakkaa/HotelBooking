@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;
 
@@ -23,6 +24,12 @@ public class VillaNumberController : Controller
     [HttpGet]
     public IActionResult Create()
     {
+        IEnumerable<SelectListItem> list = _db.Villas.ToList().Select(u => new SelectListItem()
+        {
+            Text = u.Name,
+            Value = u.Id.ToString()
+        });
+        
         return View();
     }
 
