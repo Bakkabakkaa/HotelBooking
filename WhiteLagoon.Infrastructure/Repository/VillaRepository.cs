@@ -15,11 +15,6 @@ public class VillaRepository : Repository<Villa>, IVillaRepository
         _db = db;
     }
 
-    public void Save()
-    {
-        _db.SaveChanges();
-    }
-
     public void Update(Villa entity)
     {
         _db.Update(entity);
