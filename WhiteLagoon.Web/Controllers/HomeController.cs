@@ -18,7 +18,7 @@ public class HomeController : Controller
     {
         HomeVM homeVm = new HomeVM()
         {
-            VillaList = _unitOfWork.Villa.GetAll(),
+            VillaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity"),
             Nights = 1,
             CheckInDate = DateOnly.FromDateTime(DateTime.Now)
         };
