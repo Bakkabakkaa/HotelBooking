@@ -21,6 +21,11 @@ public class Repository<T> : IRepository<T> where T : class
         dbSet.Add(entity);
     }
 
+    public bool Any(Expression<Func<T, bool>> filter)
+    {
+        return dbSet.Any(filter);
+    }
+
     public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
     {
         IQueryable<T> query = dbSet;
