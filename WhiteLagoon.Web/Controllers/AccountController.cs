@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Web.ViewModels;
@@ -41,8 +42,16 @@ public class AccountController : Controller
             _roleManager.CreateAsync(new IdentityRole("Admin")).Wait();
             _roleManager.CreateAsync(new IdentityRole("Customer")).Wait();
         }
+
+        RegisterVM registerVm = new()
+        {
+            RoleList = _roleManager.Roles.Select(x => new SelectListItem()
+            {
+                Text = x.Name,
+                Value = x.Name
+            })
+        };
         
-        
-        return View();
+        return View(registerVm);
     }
 }
