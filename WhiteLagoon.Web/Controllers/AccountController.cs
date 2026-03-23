@@ -24,6 +24,7 @@ public class AccountController : Controller
         _signInManager = signInManager;
     }
     
+    [HttpGet]
     public IActionResult Login(string returnUrl = null)
     {
         returnUrl ??= Url.Content("~/");
@@ -36,6 +37,7 @@ public class AccountController : Controller
         return View(loginVm);
     }
     
+    [HttpGet]
     public IActionResult Register()
     {
         if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
@@ -53,6 +55,59 @@ public class AccountController : Controller
             })
         };
         
+        return View(registerVm);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register(RegisterVM registerVm)
+    {
+        ApplicationUser user = new()
+        {
+            Name = registerVm.Name,
+            Email = registerVm.Email,
+            PhoneNumber = registerVm.PhoneNumber,
+            NormalizedEmail = registerVm.Email.ToUpper(),
+            EmailConfirmed = true,
+            UserName = registerVm.Email,
+            CreatedAt = DateTime.Now
+        };
+
+        var result = await _userManager.CreateAsync(user, registerVm.Password);
+
+        if (result.Succeeded)
+        {
+            if (!string.IsNullOrEmpty(registerVm.Role))
+            {
+                await _userManager.AddToRoleAsync(user, registerVm.Role);
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+            }
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            if (string.IsNullOrEmpty(registerVm.RedirectUrl))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return LocalRedirect(registerVm.RedirectUrl);
+            }
+        }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError("", error.Description);
+        }
+
+        registerVm.RoleList = _roleManager.Roles.Select(x => new SelectListItem()
+        {
+            Text = x.Name,
+            Value = x.Name
+        });
+
         return View(registerVm);
     }
 }
