@@ -110,4 +110,32 @@ public class AccountController : Controller
 
         return View(registerVm);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginVM loginVM)
+    {
+        if (ModelState.IsValid)
+        {
+            var result = await _signInManager
+                .PasswordSignInAsync(loginVM.Email, loginVM.Password, loginVM.RememberMe, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                if (string.IsNullOrEmpty(loginVM.RedirectUrl))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    return LocalRedirect(loginVM.RedirectUrl);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Invalid login attempt.");
+            }
+        }
+        
+        return View(loginVM);
+    }
 }
