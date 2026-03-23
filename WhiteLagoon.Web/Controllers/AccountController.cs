@@ -36,6 +36,13 @@ public class AccountController : Controller
     
     public IActionResult Register()
     {
+        if (!_roleManager.RoleExistsAsync("Admin").GetAwaiter().GetResult())
+        {
+            _roleManager.CreateAsync(new IdentityRole("Admin")).Wait();
+            _roleManager.CreateAsync(new IdentityRole("Customer")).Wait();
+        }
+        
+        
         return View();
     }
 }
