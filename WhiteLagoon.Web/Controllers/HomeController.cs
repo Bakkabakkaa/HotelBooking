@@ -14,6 +14,8 @@ public class HomeController : Controller
     {
         _unitOfWork = unitOfWork;
     }
+    
+    [HttpGet]
     public IActionResult Index()
     {
         HomeVM homeVm = new HomeVM()
@@ -27,11 +29,29 @@ public class HomeController : Controller
 
     }
 
+    [HttpPost]
+    public IActionResult Index(HomeVM homeVm)
+    {
+        homeVm.VillaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity");
+
+        foreach (var villa in homeVm.VillaList)
+        {
+            if (villa.Id % 2 == 0)
+            {
+                villa.IsAvailable = false;
+            }
+        }
+
+        return View(homeVm);
+    }
+
+    [HttpGet]
     public IActionResult Privacy()
     {
         return View();
     }
-
+    
+    [HttpGet]
     public IActionResult Error()
     {
         return View();
