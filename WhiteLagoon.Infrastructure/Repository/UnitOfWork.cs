@@ -8,6 +8,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly ApplicationDbContext _db;
     public IVillaRepository Villa { get; private set; }
     public IVillaNumberRepository VillaNumber { get; }
+    public IBookingRepository Booking { get; }
     public IAmenityRepository Amenity { get; }
 
     public UnitOfWork(ApplicationDbContext db)
@@ -16,6 +17,7 @@ public class UnitOfWork : IUnitOfWork
         Villa = new VillaRepository(_db);
         VillaNumber = new VillaNumberRepository(_db);
         Amenity = new AmenityRepository(_db);
+        Booking = new BookingRepository(_db);
     }
 
     public void Save()
