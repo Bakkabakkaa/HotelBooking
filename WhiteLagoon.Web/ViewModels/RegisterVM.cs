@@ -17,7 +17,7 @@ public class RegisterVM
     [DataType(DataType.Password)]
     [Compare(nameof(Password))]
     [Display(Name = "Confirm password")]
-    public bool ConfirmPassword { get; set; } 
+    public string ConfirmPassword { get; set; } 
     
     [Required]
     public string Name { get; set; }

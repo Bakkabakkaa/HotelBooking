@@ -38,8 +38,9 @@ public class AccountController : Controller
     }
     
     [HttpGet]
-    public IActionResult Register()
+    public IActionResult Register(string returnUrl)
     {
+        returnUrl ??= Url.Content("~/");
         if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
         {
             _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).Wait();
@@ -52,7 +53,8 @@ public class AccountController : Controller
             {
                 Text = x.Name,
                 Value = x.Name
-            })
+            }),
+            RedirectUrl = returnUrl
         };
         
         return View(registerVm);
