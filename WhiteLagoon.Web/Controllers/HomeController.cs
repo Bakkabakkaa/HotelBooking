@@ -34,7 +34,14 @@ public class HomeController : Controller
     {
         homeVm.VillaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity");
 
-        foreach (var villa in homeVm.VillaList)
+        return View(homeVm);
+    }
+
+    public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
+    {
+        var villaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity").ToList();
+
+        foreach (var villa in villaList)
         {
             if (villa.Id % 2 == 0)
             {
@@ -42,7 +49,14 @@ public class HomeController : Controller
             }
         }
 
-        return View(homeVm);
+        HomeVM homeVm = new HomeVM()
+        {
+            CheckInDate = checkInDate,
+            VillaList = villaList,
+            Nights = nights
+        };
+
+        return PartialView("_VillaList", homeVm);
     }
 
     [HttpGet]
