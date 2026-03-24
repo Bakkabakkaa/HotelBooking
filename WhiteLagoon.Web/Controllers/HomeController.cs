@@ -30,13 +30,6 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Index(HomeVM homeVm)
-    {
-        homeVm.VillaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity");
-
-        return View(homeVm);
-    }
-
     public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
     {
         var villaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity").ToList();
