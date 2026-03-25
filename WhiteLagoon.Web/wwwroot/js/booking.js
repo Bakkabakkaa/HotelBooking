@@ -2,17 +2,15 @@
 
 
 $(document).ready(function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status');
-    loadDataTable(status);    
+    loadDataTable();
 
 });
 
 
-function loadDataTable(status) {
+function loadDataTable() {
     dataTable = $('#tblBookings').DataTable({
         "ajax": {
-            url: '/booking/getall?status='+status
+            url: '/booking/getall'
         },
         "columns": [
             { data: 'id', "width": "5%" },
