@@ -1,4 +1,4 @@
-@model Booking
+﻿@model Booking
 
 <div class="p-4 mt-0 mt-lg-4">
     <div class="row" style="border: 1px solid #aaa;">
@@ -87,6 +87,22 @@
                         <label class="text-warning">Actual Check-out Date</label>
                         <input asp-for="ActualCheckOutDate" disabled class="form-control" />
                     </div>
+                     @if(Model.Status==SD.StatusApproved && User.IsInRole(SD.Role_Admin))
+                        {
+                    <div class="form-group pt-2 col-6">
+                        <label class="text-danger" asp-for="VillaNumber"></label>
+                       
+                            <select class="form-select" asp-for="VillaNumber">
+                                @foreach (var item in Model.VillaNumbers)
+                                {
+                                    <option value="@item.Villa_Number">@item.Villa_Number</option>
+                                }
+                            </select>
+                       
+                        
+                    </div>
+                    }
+
                     @if (Model.IsPaymentSuccessful && User.IsInRole(SD.Role_Admin))
                     {
                         <div class="form-group pt-2 col-6">
@@ -102,7 +118,6 @@
                             <input asp-for="PaymentDate" disabled class="form-control" />
                         </div>
                     }
-
                 </div>
                 <div class="form-group pt-2 pt-md-4">
                     @if (User.IsInRole(SD.Role_Admin))
