@@ -1,65 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using WhiteLagoon.Domain.Entities;
 
-namespace WhiteLagoon.Application.Common.Utility;
-
-public static class SD
+namespace WhiteLagoon.Application.Common.Utility
 {
-    public const string Role_Customer = "Customer";
-    public const string Role_Admin = "Admin";
-    
-    public const string StatusPending = "Pending";
-    public const string StatusApproved = "Approved";
-    public const string StatusCheckedIn = "CheckedIn";
-    public const string StatusCompleted = "Completed";
-    public const string StatusCancelled = "Cancelled";
-    public const string StatusRefunded = "Refunded";
-    
-    public static int VillaRoomsAvailable_Count(
-        int villaId,
-        List<VillaNumber> villaNumberList,
-        DateOnly checkInDate,
-        int nights,
-        List<Booking> bookings)
+    public static class SD
     {
-        Console.WriteLine($"Всего броней: {bookings.Count}");
+        public const string Role_Customer = "Customer";
+        public const string Role_Admin = "Admin";
 
-        List<int> bookingInDate = new();
-        int finalAvailableRoomForAllNights = int.MaxValue;
-        var roomsInVilla = villaNumberList.Count(x => x.VillaId == villaId);
+        public const string StatusPending = "Pending";
+        public const string StatusApproved = "Approved";
+        public const string StatusCheckedIn = "CheckedIn";
+        public const string StatusCompleted = "Completed";
+        public const string StatusCancelled = "Cancelled";
+        public const string StatusRefunded = "Refunded";
 
-        for (int i = 0; i < nights; i++)
+        public static int VillaRoomsAvailable_Count(int villaId, 
+            List<VillaNumber> villaNumberList, DateOnly checkInDate, int nights,
+           List<Booking> bookings)
         {
-            var currentDate = checkInDate.AddDays(i);
-            Console.WriteLine($"\nДата: {currentDate}");
+            List<int> bookingInDate = new();
+            int finalAvailableRoomForAllNights = int.MaxValue;
+            var roomsInVilla = villaNumberList.Where(x => x.VillaId == villaId).Count();
 
-            var villasBooked = bookings.Where(u =>
-                u.CheckInDate <= currentDate &&
-                u.CheckOutDate > currentDate &&
-                u.VillaId == villaId);
-
-            foreach (var booking in villasBooked)
+            for(int i = 0; i < nights; i++)
             {
-                Console.WriteLine($"FOUND: Id={booking.Id}, VillaId={booking.VillaId}");
+                var villasBooked = bookings.Where(u => u.CheckInDate <= checkInDate.AddDays(i)
+                && u.CheckOutDate > checkInDate.AddDays(i) && u.VillaId == villaId);
 
-                if (!bookingInDate.Contains(booking.Id))
+                foreach(var booking in villasBooked)
                 {
-                    bookingInDate.Add(booking.Id);
+                    if (!bookingInDate.Contains(booking.Id))
+                    {
+                        bookingInDate.Add(booking.Id);
+                    }
+                }
+
+                var totalAvailableRooms = roomsInVilla - bookingInDate.Count;
+                if(totalAvailableRooms == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    if(finalAvailableRoomForAllNights > totalAvailableRooms)
+                    {
+                        finalAvailableRoomForAllNights = totalAvailableRooms;
+                    }
                 }
             }
 
-            var totalAvailableRooms = roomsInVilla - bookingInDate.Count;
-
-            if (totalAvailableRooms == 0)
-            {
-                return 0;
-            }
-
-            if (finalAvailableRoomForAllNights > totalAvailableRooms)
-            {
-                finalAvailableRoomForAllNights = totalAvailableRooms;
-            }
+            return finalAvailableRoomForAllNights;
         }
-
-        return finalAvailableRoomForAllNights;
     }
 }
