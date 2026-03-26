@@ -14,21 +14,33 @@ public static class SD
     public const string StatusCancelled = "Cancelled";
     public const string StatusRefunded = "Refunded";
     
-    public static int VillaRoomsAvailable_Count(int villaId, 
-        List<VillaNumber> villaNumberList, DateOnly checkInDate, int nights,
+    public static int VillaRoomsAvailable_Count(
+        int villaId,
+        List<VillaNumber> villaNumberList,
+        DateOnly checkInDate,
+        int nights,
         List<Booking> bookings)
     {
+        Console.WriteLine($"Всего броней: {bookings.Count}");
+
         List<int> bookingInDate = new();
         int finalAvailableRoomForAllNights = int.MaxValue;
-        var roomsInVilla = villaNumberList.Where(x => x.VillaId == villaId).Count();
+        var roomsInVilla = villaNumberList.Count(x => x.VillaId == villaId);
 
-        for(int i = 0; i < nights; i++)
+        for (int i = 0; i < nights; i++)
         {
-            var villasBooked = bookings.Where(u => u.CheckInDate <= checkInDate.AddDays(i)
-                                                   && u.CheckOutDate > checkInDate.AddDays(i) && u.VillaId == villaId);
+            var currentDate = checkInDate.AddDays(i);
+            Console.WriteLine($"\nДата: {currentDate}");
 
-            foreach(var booking in villasBooked)
+            var villasBooked = bookings.Where(u =>
+                u.CheckInDate <= currentDate &&
+                u.CheckOutDate > currentDate &&
+                u.VillaId == villaId);
+
+            foreach (var booking in villasBooked)
             {
+                Console.WriteLine($"FOUND: Id={booking.Id}, VillaId={booking.VillaId}");
+
                 if (!bookingInDate.Contains(booking.Id))
                 {
                     bookingInDate.Add(booking.Id);
@@ -36,16 +48,15 @@ public static class SD
             }
 
             var totalAvailableRooms = roomsInVilla - bookingInDate.Count;
-            if(totalAvailableRooms == 0)
+
+            if (totalAvailableRooms == 0)
             {
                 return 0;
             }
-            else
+
+            if (finalAvailableRoomForAllNights > totalAvailableRooms)
             {
-                if(finalAvailableRoomForAllNights > totalAvailableRooms)
-                {
-                    finalAvailableRoomForAllNights = totalAvailableRooms;
-                }
+                finalAvailableRoomForAllNights = totalAvailableRooms;
             }
         }
 
