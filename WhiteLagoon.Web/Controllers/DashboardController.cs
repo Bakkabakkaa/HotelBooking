@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Application.Common.Utility;
+using WhiteLagoon.Web.ViewModels;
 
 namespace WhiteLagoon.Web.Controllers;
 
@@ -31,5 +32,22 @@ public class DashboardController : Controller
 
         var countByPreviousMonth = totalBookings.Count(u => u.BookingDate >= previousMonthStartDate &&
                                                             u.BookingDate <= currentMonthStartDate);
+
+        RadialBarChartVM radialBarChartVM = new();
+
+        var increaseDecreaseRatio = 100;
+
+        if (countByPreviousMonth != 0)
+        {
+            increaseDecreaseRatio =
+                Convert.ToInt32((countByCurrentMonth - countByPreviousMonth) / countByPreviousMonth * 100);
+        }
+        
+        radialBarChartVM.TotalCount = totalBookings.Count();
+        radialBarChartVM.CountInCurrentMonth = countByCurrentMonth;
+        radialBarChartVM.HasRatioIncreased = currentMonthStartDate > previousMonthStartDate;
+        radialBarChartVM.Series = new int[] { increaseDecreaseRatio };
+
+        return Json(radialBarChartVM);
     }
 }
