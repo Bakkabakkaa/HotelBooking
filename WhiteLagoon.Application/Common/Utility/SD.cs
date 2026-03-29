@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WhiteLagoon.Application.Common.DTO;
 using WhiteLagoon.Domain.Entities;
 
 namespace WhiteLagoon.Application.Common.Utility
@@ -19,6 +20,26 @@ namespace WhiteLagoon.Application.Common.Utility
         public const string StatusCancelled = "Cancelled";
         public const string StatusRefunded = "Refunded";
 
+        public static RadialBarChartDto GetRadialCartDataModel(int totalCount, double currentMonthCount, double prevMonthCount)
+        {
+            RadialBarChartDto RadialBarChartDto = new();
+
+
+            int increaseDecreaseRatio = 100;
+
+            if (prevMonthCount != 0)
+            {
+                increaseDecreaseRatio = Convert.ToInt32((currentMonthCount - prevMonthCount) / prevMonthCount * 100);
+            }
+
+            RadialBarChartDto.TotalCount = totalCount;
+            RadialBarChartDto.CountInCurrentMonth = Convert.ToInt32(currentMonthCount);
+            RadialBarChartDto.HasRatioIncreased = currentMonthCount > prevMonthCount;
+            RadialBarChartDto.Series = new int[] { increaseDecreaseRatio };
+
+            return RadialBarChartDto;
+        }
+        
         public static int VillaRoomsAvailable_Count(int villaId, 
             List<VillaNumber> villaNumberList, DateOnly checkInDate, int nights,
            List<Booking> bookings)
