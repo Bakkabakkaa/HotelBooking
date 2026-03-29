@@ -227,8 +227,8 @@ public class BookingController : Controller
         table.TableFormat.Paddings.Bottom = 7f;
         table.TableFormat.Borders.Horizontal.LineWidth = 1f;
 
-
-        table.ResetCells(2, 4);
+        int rows = bookingFromDb.VillaNumber > 0 ? 3 : 2;
+        table.ResetCells(rows, 4);
 
         WTableRow row0 = table.Rows[0];
 
@@ -250,6 +250,15 @@ public class BookingController : Controller
         row1.Cells[3].AddParagraph().AppendText(bookingFromDb.TotalCost.ToString("c"));
         row1.Cells[3].Width = 80;
 
+        if (bookingFromDb.VillaNumber > 0)
+        {
+            WTableRow row2 = table.Rows[2];
+
+            row2.Cells[0].Width = 80;
+            row2.Cells[1].AddParagraph().AppendText("Villa Number - " + bookingFromDb.VillaNumber.ToString());
+            row2.Cells[1].Width = 220;
+            row2.Cells[3].Width = 80;
+        }
 
         WTableStyle tableStyle = document.AddTableStyle("CustomStyle") as WTableStyle;
         tableStyle.TableProperties.RowStripe = 1;
@@ -274,11 +283,9 @@ public class BookingController : Controller
 
 
         using DocIORenderer renderer = new();
-
         MemoryStream stream = new();
         if (downloadType == "word")
         {
-                
             document.Save(stream, FormatType.Docx);
             stream.Position = 0;
 
