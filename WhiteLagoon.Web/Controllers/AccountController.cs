@@ -30,12 +30,12 @@ public class AccountController : Controller
     {
         returnUrl ??= Url.Content("~/");
 
-        LoginDto loginDto = new LoginDto()
+        LoginVM loginVm = new LoginVM()
         {
             RedirectUrl = returnUrl
         };
         
-        return View(loginDto);
+        return View(loginVm);
     }
     
     [HttpGet]
@@ -116,29 +116,29 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginDto loginDto)
+    public async Task<IActionResult> Login(LoginVM loginVm)
     {
         if (ModelState.IsValid)
         {
             var result = await _signInManager
-                .PasswordSignInAsync(loginDto.Email, loginDto.Password, loginDto.RememberMe, lockoutOnFailure: false);
+                .PasswordSignInAsync(loginVm.Email, loginVm.Password, loginVm.RememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByEmailAsync(loginDto.Email);
+                var user = await _userManager.FindByEmailAsync(loginVm.Email);
                 if (await _userManager.IsInRoleAsync(user, SD.Role_Admin))
                 {
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else
                 {
-                    if (string.IsNullOrEmpty(loginDto.RedirectUrl))
+                    if (string.IsNullOrEmpty(loginVm.RedirectUrl))
                     {
                         return RedirectToAction("Index", "Home");
                     }
                     else
                     {
-                        return LocalRedirect(loginDto.RedirectUrl);
+                        return LocalRedirect(loginVm.RedirectUrl);
                     }
                 }
             }
@@ -148,7 +148,7 @@ public class AccountController : Controller
             }
         }
         
-        return View(loginDto);
+        return View(loginVm);
     }
 
     [HttpGet]
