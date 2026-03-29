@@ -1,69 +1,85 @@
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Infrastructure.Data;
 
-namespace WhiteLagoon.Infrastructure.Repository;
-
-public class Repository<T> : IRepository<T> where T : class
+namespace WhiteLagoon.Infrastructure.Repository
 {
-    private readonly ApplicationDbContext _db;
-    internal DbSet<T> dbSet;
-
-    public Repository(ApplicationDbContext db)
+    public class Repository<T> : IRepository<T> where T : class
     {
-        _db = db;
-        dbSet = _db.Set<T>();
-    }
-
-    public void Add(T entity)
-    {
-        dbSet.Add(entity);
-    }
-
-    public bool Any(Expression<Func<T, bool>> filter)
-    {
-        return dbSet.Any(filter);
-    }
-
-    public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
-    {
-        IQueryable<T> query = dbSet;
-        if (filter != null)
+        private readonly ApplicationDbContext _db;
+        internal DbSet<T> dbSet;
+        public Repository(ApplicationDbContext db)
         {
-            query = query.Where(filter);
+            _db = db;
+            dbSet = _db.Set<T>();
         }
-        if (!string.IsNullOrEmpty(includeProperties))
+        public void Add(T entity)
         {
-            foreach (var includeProp in includeProperties
-                         .Split(new char[] { ','}, StringSplitOptions.RemoveEmptyEntries))
+            dbSet.Add(entity);
+        }
+
+        public bool Any(Expression<Func<T, bool>> filter)
+        {
+            return dbSet.Any(filter);
+        }
+
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
+        {
+            IQueryable<T> query;
+            if (tracked)
             {
-                query = query.Include(includeProp);
+                query = dbSet;
             }
-        }
-        return query.ToList();    }
-
-    public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
-    {
-        IQueryable<T> query = dbSet;
-        if (filter != null)
-        {
-            query = query.Where(filter);
-        }
-        if (!string.IsNullOrEmpty(includeProperties))
-        {
-            //Villa,VillaNumber -- case sensitive
-            foreach (var includeProp in includeProperties
-                         .Split(new char[] { ','}, StringSplitOptions.RemoveEmptyEntries))
+            else
             {
-                query = query.Include(includeProp);
+                query=dbSet.AsNoTracking();
             }
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                //Villa,VillaNumber -- case sensitive
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+            return query.FirstOrDefault();
         }
-        return query.FirstOrDefault();
-    }
 
-    public void Remove(T entity)
-    {
-        dbSet.Remove(entity);
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, bool tracked = false)
+        {
+            IQueryable<T> query;
+            if (tracked)
+            {
+                query = dbSet;
+            }
+            else
+            {
+                query = dbSet.AsNoTracking();
+            }
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+            return query.ToList();
+        }
+
+        public void Remove(T entity)
+        {
+            dbSet.Remove(entity);
+        }
     }
 }
