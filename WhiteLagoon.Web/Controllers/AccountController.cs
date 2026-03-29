@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WhiteLagoon.Application.Common.DTO;
 using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Application.Common.Utility;
 using WhiteLagoon.Domain.Entities;
@@ -29,12 +30,12 @@ public class AccountController : Controller
     {
         returnUrl ??= Url.Content("~/");
 
-        LoginVM loginVm = new LoginVM()
+        LoginDto loginDto = new LoginDto()
         {
             RedirectUrl = returnUrl
         };
         
-        return View(loginVm);
+        return View(loginDto);
     }
     
     [HttpGet]
@@ -115,29 +116,29 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginVM loginVM)
+    public async Task<IActionResult> Login(LoginDto loginDto)
     {
         if (ModelState.IsValid)
         {
             var result = await _signInManager
-                .PasswordSignInAsync(loginVM.Email, loginVM.Password, loginVM.RememberMe, lockoutOnFailure: false);
+                .PasswordSignInAsync(loginDto.Email, loginDto.Password, loginDto.RememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByEmailAsync(loginVM.Email);
+                var user = await _userManager.FindByEmailAsync(loginDto.Email);
                 if (await _userManager.IsInRoleAsync(user, SD.Role_Admin))
                 {
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else
                 {
-                    if (string.IsNullOrEmpty(loginVM.RedirectUrl))
+                    if (string.IsNullOrEmpty(loginDto.RedirectUrl))
                     {
                         return RedirectToAction("Index", "Home");
                     }
                     else
                     {
-                        return LocalRedirect(loginVM.RedirectUrl);
+                        return LocalRedirect(loginDto.RedirectUrl);
                     }
                 }
             }
@@ -147,7 +148,7 @@ public class AccountController : Controller
             }
         }
         
-        return View(loginVM);
+        return View(loginDto);
     }
 
     [HttpGet]

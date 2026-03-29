@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WhiteLagoon.Web.ViewModels;
+namespace WhiteLagoon.Application.Common.DTO;
 
-public class LoginVM
+public class LoginDto
 {
     [Required]
     public string Email { get; set; }
