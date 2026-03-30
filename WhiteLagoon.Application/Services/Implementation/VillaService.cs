@@ -69,12 +69,12 @@ public class VillaService : IVillaService
 
     public IEnumerable<Villa> GetAllVillas()
     {
-        return _unitOfWork.Villa.GetAll();
+        return _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity");
     }
 
     public Villa GetVillaById(int id)
     {
-        return _unitOfWork.Villa.Get(u => u.Id == id);
+        return _unitOfWork.Villa.Get(u => u.Id == id, includeProperties: "VillaAmenity");
     }
 
     public void UpdateVilla(Villa villa)
