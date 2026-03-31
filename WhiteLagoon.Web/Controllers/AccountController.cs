@@ -15,7 +15,7 @@ public class AccountController : Controller
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
 
-    public AccountController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager,
+    public AccountController(UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> signInManager)
     {
         _roleManager = roleManager;
@@ -158,6 +158,11 @@ public class AccountController : Controller
 
     [HttpGet]
     public IActionResult AccessDenied()
+    {
+        return View();
+    }
+    
+    public IActionResult ForgotPassword()
     {
         return View();
     }
