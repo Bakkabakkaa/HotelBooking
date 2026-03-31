@@ -31,9 +31,13 @@ public class Booking
 
     [Required]
     public DateTime BookingDate { get; set; }
+    
     [Required]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     public DateOnly CheckInDate { get; set; }
+    
     [Required]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     public DateOnly CheckOutDate { get; set; }
 
     public bool IsPaymentSuccessful { get; set; } = false;
