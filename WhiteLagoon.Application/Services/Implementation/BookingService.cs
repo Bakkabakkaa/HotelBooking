@@ -58,7 +58,7 @@ public class BookingService : IBookingService
     
     public void UpdateStatus(int bookingId, string bookingStatus, int villaNumber = 0)
     {
-        var bookingFromDb = _unitOfWork.Booking.Get(m => m.Id == bookingId);
+        var bookingFromDb = _unitOfWork.Booking.Get(m => m.Id == bookingId, tracked:true);
         if (bookingFromDb != null)
         {
             bookingFromDb.Status = bookingStatus;
@@ -73,11 +73,12 @@ public class BookingService : IBookingService
                 bookingFromDb.ActualCheckOutDate = DateTime.Now;
             }
         }
+        _unitOfWork.Save();
     }
 
     public void UpdateStripePaymentID(int bookingId, string sessionId, string paymentIntentId)
     {
-        var bookingFromDb = _unitOfWork.Booking.Get(m => m.Id == bookingId);
+        var bookingFromDb = _unitOfWork.Booking.Get(m => m.Id == bookingId, tracked: true);
         if (bookingFromDb != null)
         {
             if (!string.IsNullOrEmpty(sessionId))
@@ -92,5 +93,6 @@ public class BookingService : IBookingService
                 bookingFromDb.IsPaymentSuccessful = true;
             }
         }
+        _unitOfWork.Save();
     }
 }

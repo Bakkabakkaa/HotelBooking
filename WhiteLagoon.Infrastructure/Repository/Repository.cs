@@ -9,11 +9,13 @@ namespace WhiteLagoon.Infrastructure.Repository
     {
         private readonly ApplicationDbContext _db;
         internal DbSet<T> dbSet;
+
         public Repository(ApplicationDbContext db)
         {
             _db = db;
             dbSet = _db.Set<T>();
         }
+
         public void Add(T entity)
         {
             dbSet.Add(entity);
@@ -33,25 +35,29 @@ namespace WhiteLagoon.Infrastructure.Repository
             }
             else
             {
-                query=dbSet.AsNoTracking();
+                query = dbSet.AsNoTracking();
             }
+
             if (filter != null)
             {
                 query = query.Where(filter);
             }
+
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 //Villa,VillaNumber -- case sensitive
                 foreach (var includeProp in includeProperties
-                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                             .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Include(includeProp);
+                    query = query.Include(includeProp.Trim());
                 }
             }
+
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null, bool tracked = false)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null,
+            bool tracked = false)
         {
             IQueryable<T> query;
             if (tracked)
@@ -62,18 +68,21 @@ namespace WhiteLagoon.Infrastructure.Repository
             {
                 query = dbSet.AsNoTracking();
             }
+
             if (filter != null)
             {
                 query = query.Where(filter);
             }
+
             if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var includeProp in includeProperties
-                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                             .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Include(includeProp);
+                    query = query.Include(includeProp.Trim());
                 }
             }
+
             return query.ToList();
         }
 
