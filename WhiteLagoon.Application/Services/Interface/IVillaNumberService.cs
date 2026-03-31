@@ -10,5 +10,4 @@ public interface IVillaNumberService
     void UpdateVillaNumber(VillaNumber villaNumber);
     bool DeleteVillaNumber(int id);
     bool CheckVillaNumberExists(int villa_Number);
-    bool IsVillaAvailableByDate(int villaId, int nights, DateOnly checkInDate);
 }

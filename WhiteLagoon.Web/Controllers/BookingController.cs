@@ -158,7 +158,7 @@ namespace WhiteLagoon.Web.Controllers
             {
                 var availableVillaNumber = AssignAvailableVillaNumberByVilla(bookingFromDb.VillaId);
 
-                bookingFromDb.VillaNumbers = _unitOfWork.VillaNumber.GetAll(u => u.VillaId == bookingFromDb.VillaId
+                bookingFromDb.VillaNumbers = _villaNumberService.GetAllVillaNumbers().Where(u => u.VillaId == bookingFromDb.VillaId
                     && availableVillaNumber.Any(x => x == u.Villa_Number)).ToList();
             }
 
@@ -332,10 +332,9 @@ namespace WhiteLagoon.Web.Controllers
         {
             List<int> availableVillaNumbers = new();
 
-            var villaNumbers = _unitOfWork.VillaNumber.GetAll(u => u.VillaId == villaId);
+            var villaNumbers = _villaNumberService.GetAllVillaNumbers();
 
-            var checkedInVilla = _unitOfWork.Booking.GetAll(u => u.VillaId == villaId && u.Status == SD.StatusCheckedIn)
-                .Select(u => u.VillaNumber);
+            var checkedInVilla = _bookingService.GetCheckedInVillaNumbers(villaId);
 
             foreach (var villaNumber in villaNumbers)
             {
