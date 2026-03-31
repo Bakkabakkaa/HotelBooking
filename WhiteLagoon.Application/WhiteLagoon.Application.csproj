@@ -10,4 +10,8 @@
       <ProjectReference Include="..\WhiteLagoon.Domain\WhiteLagoon.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Stripe.net" Version="51.0.0" />
+    </ItemGroup>
+
 </Project>
