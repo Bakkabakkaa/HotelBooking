@@ -8,6 +8,7 @@ namespace WhiteLagoon.Application.Services.Implementation;
 public class BookingService : IBookingService
 {
     private readonly IUnitOfWork _unitOfWork;
+
     public BookingService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
@@ -22,7 +23,7 @@ public class BookingService : IBookingService
     public IEnumerable<Booking> GetAllBookings(string userId = "", string? statusFilterList = "")
     {
         IEnumerable<string> statusList = statusFilterList.ToLower().Split(",");
-        if(!string.IsNullOrEmpty(statusFilterList) && !string.IsNullOrEmpty(userId))
+        if (!string.IsNullOrEmpty(statusFilterList) && !string.IsNullOrEmpty(userId))
         {
             return _unitOfWork.Booking.GetAll(u => statusList.Contains(u.Status.ToLower()) &&
                                                    u.UserId == userId, includeProperties: "User,Villa");
@@ -31,21 +32,24 @@ public class BookingService : IBookingService
         {
             if (!string.IsNullOrEmpty(statusFilterList))
             {
-                return _unitOfWork.Booking.GetAll(u => statusList.Contains(u.Status.ToLower()), includeProperties: "User,Villa");
+                return _unitOfWork.Booking.GetAll(u => statusList.Contains(u.Status.ToLower()),
+                    includeProperties: "User,Villa");
             }
+
             if (!string.IsNullOrEmpty(userId))
             {
                 return _unitOfWork.Booking.GetAll(u => u.UserId == userId, includeProperties: "User,Villa");
             }
         }
+
         return _unitOfWork.Booking.GetAll(includeProperties: "User, Villa");
     }
 
     public Booking GetBookingById(int bookingId)
     {
-        return _unitOfWork.Booking.Get(u=>u.Id==bookingId,includeProperties: "User, Villa");
+        return _unitOfWork.Booking.Get(u => u.Id == bookingId, includeProperties: "User, Villa");
     }
-    
+
     public void UpdateStatus(int bookingId, string bookingStatus, int villaNumber = 0)
     {
         var bookingFromDb = _unitOfWork.Booking.Get(m => m.Id == bookingId);
@@ -57,13 +61,14 @@ public class BookingService : IBookingService
                 bookingFromDb.VillaNumber = villaNumber;
                 bookingFromDb.ActualCheckInDate = DateTime.Now;
             }
+
             if (bookingStatus == SD.StatusCompleted)
             {
                 bookingFromDb.ActualCheckOutDate = DateTime.Now;
             }
         }
     }
-    
+
     public void UpdateStripePaymentID(int bookingId, string sessionId, string paymentIntentId)
     {
         var bookingFromDb = _unitOfWork.Booking.Get(m => m.Id == bookingId);
@@ -73,6 +78,7 @@ public class BookingService : IBookingService
             {
                 bookingFromDb.StripeSessionId = sessionId;
             }
+
             if (!string.IsNullOrEmpty(paymentIntentId))
             {
                 bookingFromDb.StripePaymentIntentId = paymentIntentId;

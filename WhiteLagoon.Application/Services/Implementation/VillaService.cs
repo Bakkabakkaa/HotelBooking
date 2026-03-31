@@ -135,6 +135,4 @@ public class VillaService : IVillaService
 
         return roomAvailable > 0;
     }
-    
-    
 }

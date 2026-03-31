@@ -12,7 +12,7 @@ public class VillaNumberService : IVillaNumberService
     {
         _unitOfWork = unitOfWork;
     }
-    
+
     public bool CheckVillaNumberExists(int villa_Number)
     {
         return _unitOfWork.VillaNumber.Any(u => u.Villa_Number == villa_Number);
@@ -35,12 +35,13 @@ public class VillaNumberService : IVillaNumberService
                 _unitOfWork.Save();
                 return true;
             }
+
             return false;
         }
         catch (Exception)
         {
             return false;
-        }   
+        }
     }
 
     public IEnumerable<VillaNumber> GetAllVillaNumbers()
