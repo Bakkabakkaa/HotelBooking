@@ -11,7 +11,9 @@
             Hello @UserManager.GetUserName(User)
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="nav-link text-center" asp-controller="Account" asp-action="Logout">Logout</a>
+            <li>
+                <a class="dropdown-item text-center" asp-controller="Account" asp-action="Logout">Logout</a>
+            </li>
         </ul>
     </li>
 </ul>

@@ -10,6 +10,7 @@ public class VillaService : IVillaService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IWebHostEnvironment _webHostEnvironment;
+    private const string VillaImageFolder = "images/VillaImage";
 
     public VillaService(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
     {
@@ -22,12 +23,13 @@ public class VillaService : IVillaService
         if (villa.Image != null)
         {
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(villa.Image.FileName);
-            string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, @"images\VillaImage");
+            string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", "VillaImage");
+            Directory.CreateDirectory(imagePath);
 
             using var fileStream = new FileStream(Path.Combine(imagePath, fileName), FileMode.Create);
             villa.Image.CopyTo(fileStream);
 
-            villa.ImageUrl = @"\images\VillaImage\" + fileName;
+            villa.ImageUrl = $"/{VillaImageFolder}/{fileName}";
         }
         else
         {
@@ -48,7 +50,7 @@ public class VillaService : IVillaService
                 if (!string.IsNullOrEmpty(objFromDb.ImageUrl))
                 {
                     var oldImagePath =
-                        Path.Combine(_webHostEnvironment.WebRootPath, objFromDb.ImageUrl.TrimStart('\\'));
+                        Path.Combine(_webHostEnvironment.WebRootPath, objFromDb.ImageUrl.TrimStart('\\', '/'));
 
                     if (System.IO.File.Exists(oldImagePath))
                     {
@@ -72,7 +74,6 @@ public class VillaService : IVillaService
     {
         return _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity");
     }
-
     public Villa GetVillaById(int id)
     {
         return _unitOfWork.Villa.Get(u => u.Id == id, includeProperties: "VillaAmenity");
@@ -102,11 +103,12 @@ public class VillaService : IVillaService
         if (villa.Image != null)
         {
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(villa.Image.FileName);
-            string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, @"images\VillaImage");
+            string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", "VillaImage");
+            Directory.CreateDirectory(imagePath);
 
             if (!string.IsNullOrEmpty(villa.ImageUrl))
             {
-                var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, villa.ImageUrl.TrimStart('\\'));
+                var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, villa.ImageUrl.TrimStart('\\', '/'));
 
                 if (System.IO.File.Exists(oldImagePath))
                 {
@@ -117,7 +119,7 @@ public class VillaService : IVillaService
             using var fileStream = new FileStream(Path.Combine(imagePath, fileName), FileMode.Create);
             villa.Image.CopyTo(fileStream);
 
-            villa.ImageUrl = @"\images\VillaImage\" + fileName;
+            villa.ImageUrl = $"/{VillaImageFolder}/{fileName}";
         }
 
         _unitOfWork.Villa.Update(villa);
@@ -128,7 +130,7 @@ public class VillaService : IVillaService
     {
         var villaNumbersList = _unitOfWork.VillaNumber.GetAll().ToList();
         var bookedVillas = _unitOfWork.Booking.GetAll(u => u.Status == SD.StatusApproved ||
-                                                           u.Status == SD.StatusCheckedIn).ToList();
+            u.Status == SD.StatusCheckedIn).ToList();
 
         int roomAvailable = SD.VillaRoomsAvailable_Count
             (villaId, villaNumbersList, checkInDate, nights, bookedVillas);
