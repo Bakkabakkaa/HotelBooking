@@ -38,6 +38,9 @@ public class VillaService : IVillaService
 
         _unitOfWork.Villa.Add(villa);
         _unitOfWork.Save();
+        // Примечание: После создания виллы необходимо добавить хотя бы один 
+        // VillaNumber через админ-панель, иначе вилла будет отображаться как "Sold Out"
+        // Это связано с тем, что доступность рассчитывается по количеству номеров виллы
     }
 
     public bool DeleteVilla(int id)
